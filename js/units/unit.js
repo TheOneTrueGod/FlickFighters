@@ -1,5 +1,7 @@
 import BaseAbility, { DELAY_TIME } from "../abilities/baseAbility.js";
 import { LOOP_DELTA } from "../game.js";
+import { UNIT_ELASTICITY, UNIT_GROUND_FRICTION } from "../physics/physicsConstants.js";
+import { UNIT_STATES } from "./unitConstants.js";
 import { CONTROLLER_TYPES } from "./unitDefs.js";
 
 var Bodies = Matter.Bodies;
@@ -11,9 +13,23 @@ export default class Unit {
         this.unitDef = unitData.unitDef;
         this.physicsBody = this.createPhysicsBody(unitData);
         this.nextAction = 0;
+        this.unitState = UNIT_STATES.NORMAL;
         this.unsetAbility();
 
         if (this.controller === CONTROLLER_TYPES.PLAYER) { this.nextAction = 5000; }
+    }
+
+    setUnitState(unitState) {
+        this.unitState = unitState;
+        switch (unitState) {
+            case UNIT_STATES.NORMAL:
+                this.physicsBody.frictionAir = UNIT_GROUND_FRICTION;
+                this.unsetAbility();
+                break;
+            case UNIT_STATES.MOVING:
+                this.physicsBody.frictionAir = 0;
+                break;
+        }
     }
 
     unsetAbility() {
@@ -36,7 +52,8 @@ export default class Unit {
 
     createPhysicsBody(unitData) {
         const body = Bodies.circle(unitData.x, unitData.y, unitData.unitDef.radius);
-        body.frictionAir = 0.04;
+        body.frictionAir = UNIT_GROUND_FRICTION;
+        body.restitution = UNIT_ELASTICITY;
         return body;
     }
     

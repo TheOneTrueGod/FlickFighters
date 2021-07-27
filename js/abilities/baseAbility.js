@@ -1,4 +1,5 @@
 import { LOOP_DELTA } from "../game.js";
+import { UNIT_STATES } from "../units/unitConstants.js";
 
 export const DELAY_TIME = 120;
 
@@ -11,13 +12,7 @@ export default class BaseAbility {
     static physicsTick(unit, deltaTime, currTime, abilityData) {
         const abilityTime = currTime - abilityData.startTime;
         if (abilityTime > LOOP_DELTA * this.ACTIVE_TICKS) {
-            unit.unsetAbility();
-        } else {
-            let moveVector = Matter.Vector.create(unit.physicsBody.velocity.x, unit.physicsBody.velocity.y);
-            moveVector = Matter.Vector.normalise(moveVector);
-            moveVector = Matter.Vector.mult(moveVector, 3);
-
-            Matter.Body.setVelocity(unit.physicsBody, moveVector);
+            unit.setUnitState(UNIT_STATES.NORMAL);
         }
     }
 
@@ -34,5 +29,7 @@ export default class BaseAbility {
         moveVector = Matter.Vector.mult(moveVector, 3);
         
         Matter.Body.setVelocity(unit.physicsBody, moveVector);
+
+        unit.setUnitState(UNIT_STATES.MOVING);
     }
 }

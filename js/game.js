@@ -1,3 +1,4 @@
+import { WALL_ELASTICITY } from "./physics/physicsConstants.js";
 import Unit from "./units/unit.js";
 import UnitManager from "./units/unitManager.js";
 
@@ -59,6 +60,10 @@ export class Game {
             // left
             Bodies.rectangle(0, mapSize.y / 2, wallWidth, mapSize.y, { isStatic: true }),
         ];
+
+        ground.forEach((body) => {
+            body.restitution = WALL_ELASTICITY;
+        })
 
         // add all of the bodies to the world
         Composite.add(this.engine.world, ground);
