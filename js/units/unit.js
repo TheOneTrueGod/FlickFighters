@@ -3,11 +3,16 @@ import { LOOP_DELTA } from "../game.js";
 import { UNIT_ELASTICITY, UNIT_GROUND_FRICTION } from "../physics/physicsConstants.js";
 import { UNIT_STATES } from "./unitConstants.js";
 import { CONTROLLER_TYPES } from "./unitDefs.js";
+import { UNIT_TEAMS } from "./unitManager.js";
 
 var Bodies = Matter.Bodies;
 export default class Unit {
     constructor(unitData) {
         this.team = unitData.team;
+        this.color = "#f5d259";
+        if (this.team === UNIT_TEAMS.PLAYER) {
+            this.color = "#063e7b";
+        }
         this.controller = unitData.controller;
         this.startPosition = { x: unitData.x, y: unitData.y };
         this.unitDef = unitData.unitDef;
@@ -23,10 +28,12 @@ export default class Unit {
         this.unitState = unitState;
         switch (unitState) {
             case UNIT_STATES.NORMAL:
+                this.physicsBody.render.fillStyle = this.color;
                 this.physicsBody.frictionAir = UNIT_GROUND_FRICTION;
                 this.unsetAbility();
                 break;
             case UNIT_STATES.MOVING:
+                this.physicsBody.render.fillStyle = "#FF0000";
                 this.physicsBody.frictionAir = 0;
                 break;
         }
@@ -51,7 +58,9 @@ export default class Unit {
     }
 
     createPhysicsBody(unitData) {
-        const body = Bodies.circle(unitData.x, unitData.y, unitData.unitDef.radius);
+        const body = Bodies.circle(unitData.x, unitData.y, unitData.unitDef.radius, {
+            render: { fillStyle: this.color }
+        });
         body.frictionAir = UNIT_GROUND_FRICTION;
         body.restitution = UNIT_ELASTICITY;
         return body;

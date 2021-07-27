@@ -30,7 +30,10 @@ export class Game {
         // create a renderer
         var render = Render.create({
             element: document.body,
-            engine: this.engine
+            engine: this.engine,
+            options: {
+                wireframes: false,
+            }
         });
 
         // run the renderer
