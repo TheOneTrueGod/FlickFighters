@@ -4,6 +4,8 @@ class UnitData {
     constructor(data) {
         this.x = data.x;
         this.y = data.y;
+        this.team = data.team;
+        this.controller = data.controller;
         this.unitDef = UnitDefMap[data.type];
         if (!this.unitDef) {
             throw new Error(`${data.type} isn't a valid unit def name.  See unitDefs.js for valid names.`)
@@ -12,7 +14,8 @@ class UnitData {
 }
 
 export class GameData {
-    constructor(jsonGameData) {
-        this.units = jsonGameData.units ? jsonGameData.units.map((unitData) => new UnitData(unitData)) : [];
+    constructor({ units, map }) {
+        this.units = units ? units.map((unitData) => new UnitData(unitData)) : [];
+        this.mapSize = { x: map.size.x, y: map.size.y };
     }
 }
